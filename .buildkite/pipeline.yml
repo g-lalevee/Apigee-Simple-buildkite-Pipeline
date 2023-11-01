@@ -1,9 +1,0 @@
-agents:
-  queue: "${BUILDKITE_AGENT_META_DATA_QUEUE:-default}"
-
-steps:
-  - label: "Step-1"
-    commands:
-      - echo "Hello World!"
-      - echo "fin"
-    artifact_paths: "artifacts/*"
