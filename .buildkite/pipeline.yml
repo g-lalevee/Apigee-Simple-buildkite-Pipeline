@@ -1,8 +1,7 @@
+agents:
+  queue: "${BUILDKITE_AGENT_META_DATA_QUEUE:-default}"
 
 steps:
   - label: ":hammer: Example Script"
     command: echo "Hello World!"
     artifact_paths: "artifacts/*"
-    agents:
-      queue: "${BUILDKITE_AGENT_META_DATA_QUEUE:-default}"
-    
