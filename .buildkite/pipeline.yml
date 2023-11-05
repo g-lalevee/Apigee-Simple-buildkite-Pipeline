@@ -20,7 +20,7 @@ steps:
 - label: "mvn deploy config xhybrid"
   commands: 
     - pwd
-    - buildkite-agent artifact download sa.json . --step build "Pipeline upload"
+    - buildkite-agent artifact download sa.json . --step  "Pipeline upload"
     - ls
     # if Linux Agent 
     # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
