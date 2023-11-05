@@ -20,6 +20,7 @@ steps:
 - label: "mvn deploy config xhybrid"
   commands: 
     - pwd
+    - buildkite-agent artifact download sa2.json . 
     - buildkite-agent artifact download sa.json . --build $BUILDKITE_BUILD_ID
     - ls
     # if Linux Agent 
