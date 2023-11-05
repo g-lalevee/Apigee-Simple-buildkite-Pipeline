@@ -25,6 +25,7 @@ steps:
     # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
     # if Mac Agent 
     - sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
+    - cat ./EdgeConfig/edge.json
     - echo "___________________________________"
     - mvn -v
     - echo "___________________________________"
