@@ -19,7 +19,7 @@ steps:
 - label: "Generate SA key file"
   commands: 
     - pwd
-    - buildkite-agent artifact download ./sa.json .
+    - buildkite-agent artifact download sa.json .
     - ls
     - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
     - cat sa.json
