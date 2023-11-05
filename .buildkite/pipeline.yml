@@ -13,7 +13,8 @@ steps:
   commands: 
     - pwd
     - echo "$GCP_SERVICE_ACCOUNT_TOKEN" > ./sa.json
-    - ls 
+    - cat sa.json
+    - echo "___________________________________"
     - buildkite-agent artifact upload ./sa.json
 
 - label: "mvn deploy config xhybrid"
@@ -25,10 +26,5 @@ steps:
     # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
     # if Mac Agent 
     - sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
-    - cat ./EdgeConfig/edge.json
-    - echo "___________________________________"
-    - cat sa.json
-    - echo "___________________________________"
-    - echo "$APIGEE_ORG" "$APIGEE_ENV"
     - echo "___________________________________"
     - mvn -X install -Pgoogleapi -Dapigee.org="bap-emea-apigee-5" -Denv="default-dev" -Dsa=sa.json -Dapigee.config.file=EdgeConfig/edge.json -Dapigee.config.options="update"
