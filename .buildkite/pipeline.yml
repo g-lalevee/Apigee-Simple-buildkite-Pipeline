@@ -31,4 +31,4 @@ steps:
     - echo "___________________________________"
     - echo "$APIGEE_ORG" "$APIGEE_ENV"
     - echo "___________________________________"
-    - mvn install  -Pgoogleapi -Dapigee.org="bap-emea-apigee-5" -Denv="default-dev" -Dsa=sa.json -Dapigee.config.file=./EdgeConfig/edge.json -Dapigee.config.options=update
+    - mvn install  -Pgoogleapi -Dapigee.org="bap-emea-apigee-5" -Denv="default-dev" -Dsa=sa.json -Dapigee.config.file=EdgeConfig/edge.json -Dapigee.config.options=update
