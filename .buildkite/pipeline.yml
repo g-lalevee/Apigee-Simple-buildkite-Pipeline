@@ -12,7 +12,11 @@ steps:
 - label: "Generate SA key file"
   commands: 
     - pwd
-    - echo "$GCP_SERVICE_ACCOUNT_TOKEN" > sa.json
+    - mkdir GCP_credentials
+    - echo "$GCP_SERVICE_ACCOUNT_TOKEN" > GCP_credentials/sa.json
+    - ls 
+  artifact_paths:
+    - "GCP_credentials/**/*"
 
 - label: "Generate SA key file"
   commands: 
