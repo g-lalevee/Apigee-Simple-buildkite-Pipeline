@@ -12,15 +12,16 @@ steps:
 - label: "Generate SA key file"
   commands: 
     - pwd
-    #- echo "$GCP_SERVICE_ACCOUNT_TOKEN" > ./sa.json
-    #- cat sa.json
-    #- echo "___________________________________"
-    #- buildkite-agent artifact upload ./sa.json
+    #- echo "$GCP_SERVICE_ACCOUNT_TOKEN" > ./sa2.json
+    - cat <<< "$GCP_SERVICE_ACCOUNT_TOKEN" > ./sa2.json
+    - cat sa2.json
+    - echo "___________________________________"
+    - buildkite-agent artifact upload ./sa2.json
 
 - label: "mvn deploy config xhybrid"
   commands: 
     - pwd
-    - buildkite-agent artifact download sa.json . --build $BUILDKITE_BUILD_ID
+    - buildkite-agent artifact download sa.json . 
     - ls
     # if Linux Agent 
     # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
