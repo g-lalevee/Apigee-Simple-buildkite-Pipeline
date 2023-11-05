@@ -25,5 +25,6 @@ steps:
     # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
     # if Mac Agent 
     - sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
-    - cat ./EdgeConfig/edge.json
+    - echo "___________________________________"
+    - mvn -v
     - mvn install -q -Pgoogleapi -Dapigee.org=$APIGEE_ORG -Denv=$APIGEE_ENV -Dsa=sa.json -Dapigee.config.file=./EdgeConfig/edge.json -Dapigee.config.options=update
