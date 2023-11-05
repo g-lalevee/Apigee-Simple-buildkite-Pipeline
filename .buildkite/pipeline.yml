@@ -12,8 +12,7 @@ steps:
 - label: "Generate SA key file"
   commands: 
     - pwd
-    #- echo "$GCP_SERVICE_ACCOUNT_TOKEN" > ./sa2.json
-    - cat <<< "$GCP_SERVICE_ACCOUNT_TOKEN" > ./sa2.json
+    - echo "popo" > ./sa2.json
     - cat sa2.json
     - echo "___________________________________"
     - buildkite-agent artifact upload ./sa2.json
