@@ -1,13 +1,13 @@
-steps:
+env: 
+  API_VERSION: "googleapi"  
+  # API_VERSION: "apigeeapi"
+  DEFAULT_APIGEE_ORG: "bap-emea-apigee-5"
+  DEFAULT_APIGEE_ENV: "default-dev"
+  TEST_HOST: "34.117.38.184.nip.io"
+  APIGEE_ORG: "bap-emea-apigee-5"
+  APIGEE_ENV: "default-dev"
 
-- label: "Define variables"
-  commands: 
-    - export API_VERSION="googleapi"  # or API_VERSION: apigeeapi
-    - DEFAULT_APIGEE_ORG="bap-emea-apigee-5"
-    - DEFAULT_APIGEE_ENV="default-dev"
-    - TEST_HOST="34.117.38.184.nip.io"
-    - APIGEE_ORG="bap-emea-apigee-5"
-    - APIGEE_ENV="default-dev"
+steps:
 
 - label: "Generate SA key file"
   commands: 
