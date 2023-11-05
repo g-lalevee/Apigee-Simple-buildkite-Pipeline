@@ -12,15 +12,14 @@ steps:
 - label: "Generate SA key file"
   commands: 
     - pwd
-    - mkdir GCP_credentials
-    - echo "$GCP_SERVICE_ACCOUNT_TOKEN" > GCP_credentials/sa.json
+    - echo "$GCP_SERVICE_ACCOUNT_TOKEN" > ./sa.json
     - ls 
-  artifact_paths:
-    - "GCP_credentials/**/*"
+    - buildkite-agent artifact upload ./sa.json
 
 - label: "Generate SA key file"
   commands: 
     - pwd
+    - buildkite-agent artifact download ./sa.json .
     - ls
     - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
     - cat sa.json
