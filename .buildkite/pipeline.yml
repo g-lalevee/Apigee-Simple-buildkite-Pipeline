@@ -16,7 +16,7 @@ steps:
     - ls 
     - buildkite-agent artifact upload ./sa.json
 
-- label: "Generate SA key file"
+- label: "mvn deploy config xhybrid"
   commands: 
     - pwd
     - buildkite-agent artifact download sa.json .
@@ -31,4 +31,4 @@ steps:
     - echo "___________________________________"
     - echo "$APIGEE_ORG" "$APIGEE_ENV"
     - echo "___________________________________"
-    - mvn -X install -Pgoogleapi -Dapigee.org="bap-emea-apigee-5" -Denv="default-dev"  -Dapigee.config.file=EdgeConfig/edge.json -Dapigee.config.options=update
+    - mvn -X install -Pgoogleapi -Dapigee.org="bap-emea-apigee-5" -Denv="default-dev" -Dsa=sa.json -Dapigee.config.file=EdgeConfig/edge.json -Dapigee.config.options="update"
