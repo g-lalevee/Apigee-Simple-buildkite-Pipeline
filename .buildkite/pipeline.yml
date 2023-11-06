@@ -34,7 +34,7 @@ steps:
 
 
   - group: "Apigee Edge"
-    key: "Apigee Edge"
+    key: "Apigee-Edge"
     steps:
       - label: "mvn deploy cfg edge"
         commands:
@@ -59,7 +59,7 @@ steps:
     if: build.env('API_VERSION') == 'apigeeapi'
 
   - group: "Apigee X/hybrid"
-    key: "Apigee X"
+    key: "Apigee-X"
     steps:
       - label: "Generate SA key file"
         command: echo "Upload GCP Service Account Key file from Buildkite Agent environment (environment hook)"
