@@ -12,14 +12,14 @@ steps:
     steps:
       - label: "Set Variables for [Main] branch"
         commands:
-          - buildkite-agent meta-data set "AUTHOR_EMAIL" "$BUILDKITE_BUILD_AUTHOR_EMAIL"
+          - buildkite-agent meta-data set "AUTHOR_EMAIL" "$BUILDKITE_BUILD_CREATOR_EMAIL"
           - buildkite-agent meta-data set "APIGEE_ORG" "$DEFAULT_APIGEE_ORG"
           - buildkite-agent meta-data set "APIGEE_ENV" "$DEFAULT_APIGEE_ENV"
         if: build.env('BUILDKITE_BRANCH') == 'main'
 
       - label: "Set Variables for [prod] branch"
         commands:
-          - buildkite-agent meta-data set "AUTHOR_EMAIL" "$BUILDKITE_BUILD_AUTHOR_EMAIL"
+          - buildkite-agent meta-data set "AUTHOR_EMAIL" "$BUILDKITE_BUILD_CREATOR_EMAIL"
           - buildkite-agent meta-data set "APIGEE_ORG" "$DEFAULT_APIGEE_ORG"
           - buildkite-agent meta-data set "APIGEE_ENV" "prod"
         if: build.env('BUILDKITE_BRANCH') == 'prod'
@@ -27,7 +27,7 @@ steps:
       - label: "Set Variables for others branchs"
         commands:
           - buildkite-agent meta-data set "APIGEE_DEPLOYMENT_SUFFIX" "$BUILDKITE_BUILD_NUMBER"
-          - buildkite-agent meta-data set "AUTHOR_EMAIL" "$BUILDKITE_BUILD_AUTHOR_EMAIL"
+          - buildkite-agent meta-data set "AUTHOR_EMAIL" "$BUILDKITE_BUILD_CREATOR_EMAIL"
           - buildkite-agent meta-data set "APIGEE_ORG" "$DEFAULT_APIGEE_ORG"
           - buildkite-agent meta-data set "APIGEE_ENV" "$DEFAULT_APIGEE_ENV"
         if: build.env('BUILDKITE_BRANCH') != 'main' && build.env('BUILDKITE_BRANCH') != 'prod'
