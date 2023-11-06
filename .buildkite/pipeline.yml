@@ -10,14 +10,14 @@ steps:
   - group: "Set Variables"
     key: "Init"
     steps:
-      - label: "Set Variables for [Main] branch "
+      - label: "Set Variables for [Main] branch"
         commands:
           - buildkite-agent meta-data set "AUTHOR_EMAIL" "$BUILDKITE_BUILD_AUTHOR_EMAIL"
           - buildkite-agent meta-data set "APIGEE_ORG" "$DEFAULT_APIGEE_ORG"
           - buildkite-agent meta-data set "APIGEE_ENV" "$DEFAULT_APIGEE_ENV"
         if: build.env('BUILDKITE_BRANCH') == 'main'
 
-      - label: "Set Variables for [prod] branch "
+      - label: "Set Variables for [prod] branch"
         commands:
           - buildkite-agent meta-data set "AUTHOR_EMAIL" "$BUILDKITE_BUILD_AUTHOR_EMAIL"
           - buildkite-agent meta-data set "APIGEE_ORG" "$DEFAULT_APIGEE_ORG"
@@ -59,37 +59,37 @@ steps:
     if: build.env('API_VERSION') == 'apigeeapi'
 
   - group: "Apigee X/hybrid"
-  key: "Apigee"
-  steps:
-    - label: "Generate SA key file"
-      command: echo "Upload GCP Service Account Key file from Buildkite Agent environment (environment hook)"
+    key: "Apigee"
+    steps:
+      - label: "Generate SA key file"
+        command: echo "Upload GCP Service Account Key file from Buildkite Agent environment (environment hook)"
 
-    - label: "mvn deploy config xhybrid"
-      commands: 
-        - buildkite-agent meta-data get "APIGEE_ORG"
-        - buildkite-agent meta-data get "APIGEE_ENV"
-        - buildkite-agent artifact download sa.txt . 
-        # if Linux Agent 
-        # - base64 --decode ./sa.txt > ./sa.json
-        # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
-        # if Mac Agent 
-        - base64 --decode -i ./sa.txt -o ./sa.json
-        - sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
-        - mvn install -Pgoogleapi -Dapigee.org=$APIGEE_ORG -Denv=$APIGEE_ENV -Dsa=sa.json -Dapigee.config.file=EdgeConfig/edge.json -Dapigee.config.options="update"
+      - label: "mvn deploy config xhybrid"
+        commands: 
+          - buildkite-agent meta-data get "APIGEE_ORG"
+          - buildkite-agent meta-data get "APIGEE_ENV"
+          - buildkite-agent artifact download sa.txt . 
+          # if Linux Agent 
+          # - base64 --decode ./sa.txt > ./sa.json
+          # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
+          # if Mac Agent 
+          - base64 --decode -i ./sa.txt -o ./sa.json
+          - sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
+          - mvn install -Pgoogleapi -Dapigee.org=$APIGEE_ORG -Denv=$APIGEE_ENV -Dsa=sa.json -Dapigee.config.file=EdgeConfig/edge.json -Dapigee.config.options="update"
 
-    - label: "mvn package & deploy proxy xhybrid"
-      command: 
-        - buildkite-agent meta-data get "APIGEE_ORG"
-        - buildkite-agent meta-data get "APIGEE_ENV"
-        - buildkite-agent meta-data get "AUTHOR_EMAIL"
-        - buildkite-agent meta-data get "APIGEE_DEPLOYMENT_SUFFIX"
-        - mvn process-resources -P$API_VERSION -Dcommit=$GIT_COMMIT -Dauthor=$AUTHOR_EMAIL -Ddeployment.suffix=$APIGEE_DEPLOYMENT_SUFFIX
-        - mvn apigee-enterprise:configure -P$API_VERSION -Dorg=$APIGEE_ORG -Denv=$APIGEE_ENV  -Ddeployment.suffix=$APIGEE_DEPLOYMENT_SUFFIX 
-        - buildkite-agent artifact download sa.txt . 
-        # if Linux Agent 
-        # - base64 --decode ./sa.txt > ./sa.json
-        # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
-        # if Mac Agent 
-        - base64 --decode -i ./sa.txt -o ./sa.json
-        - mvn apigee-enterprise:deploy -Pgoogleapi -Denv=$APIGEE_ENV -Dsa=sa.json -Dorg=$APIGEE_ORG -Ddeployment.suffix=$APIGEE_DEPLOYMENT_SUFFIX  
-  if: build.env('API_VERSION') == 'googleapi'
+      - label: "mvn package & deploy proxy xhybrid"
+        command: 
+          - buildkite-agent meta-data get "APIGEE_ORG"
+          - buildkite-agent meta-data get "APIGEE_ENV"
+          - buildkite-agent meta-data get "AUTHOR_EMAIL"
+          - buildkite-agent meta-data get "APIGEE_DEPLOYMENT_SUFFIX"
+          - mvn process-resources -P$API_VERSION -Dcommit=$GIT_COMMIT -Dauthor=$AUTHOR_EMAIL -Ddeployment.suffix=$APIGEE_DEPLOYMENT_SUFFIX
+          - mvn apigee-enterprise:configure -P$API_VERSION -Dorg=$APIGEE_ORG -Denv=$APIGEE_ENV  -Ddeployment.suffix=$APIGEE_DEPLOYMENT_SUFFIX 
+          - buildkite-agent artifact download sa.txt . 
+          # if Linux Agent 
+          # - base64 --decode ./sa.txt > ./sa.json
+          # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
+          # if Mac Agent 
+          - base64 --decode -i ./sa.txt -o ./sa.json
+          - mvn apigee-enterprise:deploy -Pgoogleapi -Denv=$APIGEE_ENV -Dsa=sa.json -Dorg=$APIGEE_ORG -Ddeployment.suffix=$APIGEE_DEPLOYMENT_SUFFIX  
+    if: build.env('API_VERSION') == 'googleapi'
