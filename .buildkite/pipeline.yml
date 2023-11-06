@@ -73,6 +73,7 @@ steps:
         command: |
             buildkite-agent meta-data keys
             export APIGEE_ORG=$(buildkite-agent meta-data get APIGEE_ORG)
+            buildkite-agent meta-data get APIGEE_ENV
             export APIGEE_ENV=$(buildkite-agent meta-data get APIGEE_ENV)
             echo "->" $APIGEE_ENV
             buildkite-agent artifact download sa.txt . 
