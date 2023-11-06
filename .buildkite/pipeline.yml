@@ -15,7 +15,8 @@ steps:
 
 - label: "mvn deploy config xhybrid"
   commands: 
-    - buildkite-agent artifact download sa.json . 
+    - buildkite-agent artifact download sa.txt . 
+    - base64 --decode ./sa.txt > ./sa.json
     # if Linux Agent 
     # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
     # if Mac Agent 
