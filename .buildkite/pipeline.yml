@@ -66,8 +66,8 @@ steps:
 
       - label: "mvn deploy config xhybrid"
         commands: 
-          - APIGEE_ORG=$(buildkite-agent meta-data get "APIGEE_ORG")
-          - APIGEE_ENV=$(buildkite-agent meta-data get "APIGEE_ENV")
+          - export APIGEE_ORG=$(buildkite-agent meta-data get APIGEE_ORG)
+          - export APIGEE_ENV=$(buildkite-agent meta-data get APIGEE_ENV)
           - buildkite-agent artifact download sa.txt . 
           # if Linux Agent 
           # - base64 --decode ./sa.txt > ./sa.json
@@ -79,10 +79,10 @@ steps:
 
       - label: "mvn package & deploy proxy xhybrid"
         command: 
-          - APIGEE_ORG=$(buildkite-agent meta-data get "APIGEE_ORG")
-          - APIGEE_ENV=$(buildkite-agent meta-data get "APIGEE_ENV")
-          - AUTHOR_EMAIL=$(buildkite-agent meta-data get "AUTHOR_EMAIL"")
-          - APIGEE_DEPLOYMENT_SUFFIX=$(buildkite-agent meta-data get "APIGEE_DEPLOYMENT_SUFFIX")
+          - export APIGEE_ORG=$(buildkite-agent meta-data get APIGEE_ORG)
+          - export APIGEE_ENV=$(buildkite-agent meta-data get APIGEE_ENV)
+          - export AUTHOR_EMAIL=$(buildkite-agent meta-data get AUTHOR_EMAIL)
+          - export APIGEE_DEPLOYMENT_SUFFIX=$(buildkite-agent meta-data get APIGEE_DEPLOYMENT_SUFFIX)
           - mvn process-resources -P$API_VERSION -Dcommit=$GIT_COMMIT -Dauthor=$AUTHOR_EMAIL -Ddeployment.suffix=$APIGEE_DEPLOYMENT_SUFFIX
           - mvn apigee-enterprise:configure -P$API_VERSION -Dorg=$APIGEE_ORG -Denv=$APIGEE_ENV  -Ddeployment.suffix=$APIGEE_DEPLOYMENT_SUFFIX 
           - buildkite-agent artifact download sa.txt . 
