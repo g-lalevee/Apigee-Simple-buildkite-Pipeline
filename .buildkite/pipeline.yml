@@ -1,6 +1,6 @@
 env: 
-  #API_VERSION: "googleapi"  
-  API_VERSION: "apigeeapi"
+  API_VERSION: "googleapi"  
+  #API_VERSION: "apigeeapi"
   DEFAULT_APIGEE_ORG: "bap-emea-apigee-5"
   DEFAULT_APIGEE_ENV: "default-dev"
   TEST_HOST: "34.117.38.184.nip.io"
@@ -8,7 +8,6 @@ env:
   APIGEE_ENV: "default-dev"
 
 steps:
-
 
 - label: "mvn deploy cfg edge"
   commands:
@@ -21,19 +20,20 @@ steps:
   if: build.env('API_VERSION') == 'apigeeapi'
 
 
-- label: "Generate SA key file"
-  command: echo "Upload GCP Service Account Key file from Buildkite Agent environment (environment hook)"
-  if: build.env('API_VERSION') == 'googleapi'
+- group: "Apigee X/hybrid"
+  key: "audits"
+  steps:
+    - label: "Generate SA key file"
+      command: echo "Upload GCP Service Account Key file from Buildkite Agent environment (environment hook)"
 
-
-- label: "mvn deploy config xhybrid"
-  commands: 
-    - buildkite-agent artifact download sa.txt . 
-    # if Linux Agent 
-    # - base64 --decode ./sa.txt > ./sa.json
-    # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
-    # if Mac Agent 
-    - base64 --decode -i ./sa.txt -o ./sa.json
-    - sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
-    - mvn install -Pgoogleapi -Dapigee.org="$APIGEE_ORG" -Denv="$APIGEE_ENV" -Dsa=sa.json -Dapigee.config.file=EdgeConfig/edge.json -Dapigee.config.options="update"
+    - label: "mvn deploy config xhybrid"
+      commands: 
+        - buildkite-agent artifact download sa.txt . 
+        # if Linux Agent 
+        # - base64 --decode ./sa.txt > ./sa.json
+        # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
+        # if Mac Agent 
+        - base64 --decode -i ./sa.txt -o ./sa.json
+        - sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
+        - mvn install -Pgoogleapi -Dapigee.org="$APIGEE_ORG" -Denv="$APIGEE_ENV" -Dsa=sa.json -Dapigee.config.file=EdgeConfig/edge.json -Dapigee.config.options="update"
   if: build.env('API_VERSION') == 'googleapi'
