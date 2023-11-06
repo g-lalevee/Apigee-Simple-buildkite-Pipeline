@@ -10,8 +10,8 @@ env:
 steps:
 
 - label: "Generate SA key file"
-  commands: 
-    - echo "Upload GCP Service Account Key file from Buildkite Agent environment (environment hook)"
+  command: echo "Upload GCP Service Account Key file from Buildkite Agent environment (environment hook)"
+  if: build.env('API_VERSION') == 'googleapi'
 
 - label: "mvn deploy config xhybrid"
   commands: 
@@ -23,3 +23,4 @@ steps:
     - base64 --decode -i ./sa.txt -o ./sa.json
     - sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
     - mvn install -Pgoogleapi -Dapigee.org="$APIGEE_ORG" -Denv="$APIGEE_ENV" -Dsa=sa.json -Dapigee.config.file=EdgeConfig/edge.json -Dapigee.config.options="update"
+  if: build.env('API_VERSION') == 'googleapi'
