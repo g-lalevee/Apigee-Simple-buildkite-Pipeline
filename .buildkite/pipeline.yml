@@ -11,7 +11,7 @@ steps:
 
 - label: "Generate SA key file"
   commands: 
-    - echo "Upload GCP Service Account Key file from Buildkite Agent environment"
+    - echo "Upload GCP Service Account Key file from Buildkite Agent environment (environment hook)"
 
 - label: "mvn deploy config xhybrid"
   commands: 
