@@ -64,18 +64,21 @@ steps:
       - label: "Generate SA key file"
         command: echo "Upload GCP Service Account Key file from Buildkite Agent environment (environment hook)"
 
+            # if Linux Agent 
+            #  base64 --decode ./sa.txt > ./sa.json
+            #  sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
+            # if Mac Agent
+
       - label: "mvn deploy config xhybrid"
-        commands: 
-          - export APIGEE_ORG=$(buildkite-agent meta-data get APIGEE_ORG)
-          - export APIGEE_ENV=$(buildkite-agent meta-data get APIGEE_ENV)
-          - buildkite-agent artifact download sa.txt . 
-          # if Linux Agent 
-          # - base64 --decode ./sa.txt > ./sa.json
-          # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
-          # if Mac Agent 
-          - base64 --decode -i ./sa.txt -o ./sa.json
-          - sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
-          - mvn install -Pgoogleapi -Dapigee.org=$APIGEE_ORG -Denv=$APIGEE_ENV -Dsa=sa.json -Dapigee.config.file=EdgeConfig/edge.json -Dapigee.config.options="update"
+        command: |
+            buildkite-agent meta-data keys
+            export APIGEE_ORG=$(buildkite-agent meta-data get APIGEE_ORG)
+            export APIGEE_ENV=$(buildkite-agent meta-data get APIGEE_ENV)
+            echo "->" $APIGEE_ENV
+            buildkite-agent artifact download sa.txt . 
+            base64 --decode -i ./sa.txt -o ./sa.json
+            sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
+            mvn install -Pgoogleapi -Dapigee.org=$APIGEE_ORG -Denv=$APIGEE_ENV -Dsa=sa.json -Dapigee.config.file=EdgeConfig/edge.json -Dapigee.config.options="update"
 
       - label: "mvn package & deploy proxy xhybrid"
         command: 
