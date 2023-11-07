@@ -14,7 +14,7 @@ steps:
         commands:
           - buildkite-agent meta-data set AUTHOR_EMAIL $BUILDKITE_BUILD_CREATOR_EMAIL
           - buildkite-agent meta-data set APIGEE_ORG $DEFAULT_APIGEE_ORG
-          - buildkite-agent meta-data set APIGEE_ENV "DEFAULT_ENV"
+          - buildkite-agent meta-data set APIGEE_ENV $DEFAULT_APIGEE_ENV
         if: build.env('BUILDKITE_BRANCH') == 'main'
 
       - label: "Set Variables for [prod] branch"
@@ -43,7 +43,7 @@ steps:
           # if Linux Agent 
           # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
           # if Mac Agent 
-          - sed -i".bck" "s/target_apigee_env/$$APIGEE_ENV/g" ./EdgeConfig/edge.json
+          - sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
           - echo $APIGEE_CREDS_USR $APIGEE_CREDS_PASSWORD
           - mvn install -Papigeeapi -Dapigee.org=$$APIGEE_ORG -Denv=$$APIGEE_ENV -Dapigee.username=$APIGEE_CREDS_USR -Dapigee.password=$APIGEE_CREDS_PASSWORD -Dapigee.config.file=./EdgeConfig/edge.json -Dapigee.config.options=update
       - label: "mvn package & deploy proxy Edge"
