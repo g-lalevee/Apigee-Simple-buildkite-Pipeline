@@ -71,7 +71,6 @@ steps:
 
       - label: "mvn deploy config xhybrid"
         command: |
-            buildkite-agent meta-data keys
             export APIGEE_ORG=$(buildkite-agent meta-data get APIGEE_ORG)
             export APIGEE_ENV=$(buildkite-agent meta-data get APIGEE_ENV)
             buildkite-agent artifact download sa.txt . 
