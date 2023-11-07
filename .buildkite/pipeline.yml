@@ -78,7 +78,8 @@ steps:
             echo "____________________________________________"
             sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
             echo "____________________________________________" 
-            popo=$$APIGEE_ENV
+            echo $$APIGEE_ENV
+            popo=$(echo $$APIGEE_ENV)
             echo $popo
             sed -i".bck" "s/target_apigee_env/$popo/g" ./EdgeConfig/edge.json
             echo "____________________________________________"
