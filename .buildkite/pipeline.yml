@@ -74,8 +74,10 @@ steps:
             buildkite-agent meta-data keys
             export APIGEE_ORG=$(buildkite-agent meta-data get APIGEE_ORG)
             buildkite-agent meta-data get APIGEE_ENV
-            export APIGEE_ENV=$(buildkite-agent meta-data get APIGEE_ENV)
+
+            export APIGEE_ENV=`buildkite-agent meta-data get APIGEE_ENV`
             echo "->" $APIGEE_ENV
+
             buildkite-agent artifact download sa.txt . 
             base64 --decode -i ./sa.txt -o ./sa.json
             sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
