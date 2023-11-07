@@ -66,7 +66,7 @@ steps:
 
             # if Linux Agent 
             #  base64 --decode ./sa.txt > ./sa.json
-            #  sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
+            #  sed -i "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
             # if Mac Agent
 
       - label: "mvn deploy config xhybrid"
@@ -76,7 +76,7 @@ steps:
             buildkite-agent artifact download sa.txt . 
             base64 --decode -i ./sa.txt -o ./sa.json
             echo "____________________________________________"
-            sed -i".bck" "s/target_apigee_env/$\$APIGEE_ENV/g" ./EdgeConfig/edge.json
+            sed -i".bck" "s/target_apigee_env/$$APIGEE_ENV/g" ./EdgeConfig/edge.json
             cat ./EdgeConfig/edge.json
             echo "____________________________________________"
 
