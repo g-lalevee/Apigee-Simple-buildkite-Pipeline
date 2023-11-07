@@ -75,9 +75,9 @@ steps:
             export APIGEE_ORG=$(buildkite-agent meta-data get APIGEE_ORG)
             buildkite-agent meta-data get APIGEE_ENV
 
-            APIGEE_ENV=$(buildkite-agent meta-data get APIGEE_ENV)
+            popo=$(buildkite-agent meta-data get APIGEE_ENV)
             echo
-            echo "->" $APIGEE_ENV
+            echo "->" $popo
 
             buildkite-agent artifact download sa.txt . 
             base64 --decode -i ./sa.txt -o ./sa.json
