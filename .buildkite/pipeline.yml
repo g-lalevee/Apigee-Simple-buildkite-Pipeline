@@ -15,6 +15,9 @@ steps:
           - buildkite-agent meta-data set AUTHOR_EMAIL $BUILDKITE_BUILD_CREATOR_EMAIL
           - buildkite-agent meta-data set APIGEE_ORG $DEFAULT_APIGEE_ORG
           - buildkite-agent meta-data set APIGEE_ENV $DEFAULT_APIGEE_ENV
+          - popo=$(buildkite-agent meta-data get APIGEE_ENV)
+          - echo
+          - echo "->" $popo
         if: build.env('BUILDKITE_BRANCH') == 'main'
 
       - label: "Set Variables for [prod] branch"
