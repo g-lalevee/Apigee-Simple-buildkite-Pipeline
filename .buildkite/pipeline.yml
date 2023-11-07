@@ -75,7 +75,7 @@ steps:
             export APIGEE_ORG=$(buildkite-agent meta-data get APIGEE_ORG)
             buildkite-agent meta-data get APIGEE_ENV
 
-            export echo APIGEE_ENV="$(buildkite-agent meta-data get APIGEE_ENV)"
+            APIGEE_ENV=$(buildkite-agent meta-data get APIGEE_ENV)
             echo
             echo "->" $APIGEE_ENV
 
