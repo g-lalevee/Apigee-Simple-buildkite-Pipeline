@@ -75,7 +75,14 @@ steps:
             export APIGEE_ENV=$(buildkite-agent meta-data get APIGEE_ENV)
             buildkite-agent artifact download sa.txt . 
             base64 --decode -i ./sa.txt -o ./sa.json
+            echo "____________________________________________"
             sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
+            echo "____________________________________________" 
+            popo=$$APIGEE_ENV
+            echo $popo
+            sed -i".bck" "s/target_apigee_env/$popo/g" ./EdgeConfig/edge.json
+            echo "____________________________________________"
+
             mvn install -Pgoogleapi -Dapigee.org=$$APIGEE_ORG -Denv=$$APIGEE_ENV -Dsa=sa.json -Dapigee.config.file=EdgeConfig/edge.json -Dapigee.config.options="update"
 
       - label: "mvn package & deploy proxy xhybrid"
