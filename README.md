@@ -1,7 +1,7 @@
 [![Build status](https://badge.buildkite.com/a2300b51ad050dd890aa263ef0fbe3fa30103ebb2f80d3b1e3.svg)](https://buildkite.com/apigee/apigee-simple-buildkite-pipeline)
 [![PyPI status](https://img.shields.io/pypi/status/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/) 
 
-# # Apigee-Simple-buildkite-Pipeline
+## Apigee-Simple-buildkite-Pipeline
 
 **This is not an official Google product.**<BR>This implementation is not an official Google product, nor is it part of an official Google product. Support is available on a best-effort basis via GitHub.
 
@@ -46,8 +46,26 @@ The folder [./apiproxy](./apiproxy) includes a simple API proxy bundle, a simple
 ## Limitations & Requirements
 
   - The authentication to the Apigee Edge management API is done using OAuth2. If you require MFA, please see the [documentation](https://github.com/apigee/apigee-deploy-maven-plugin#oauth-and-two-factor-authentication) for the Maven deploy plugin for how to configure MFA.
-  - The authentication to the Apigee X / Apigee hybrid management API is done using a GCP Service Account. See CI/CD Configuration [Instructions](https://github.com/clalevee/apigee-simple-buildkite-pipeline-v2#CI/CD-Configuration-Instructions).
+  - The authentication to the Apigee X / Apigee hybrid management API is done using a GCP Service Account. See CI/CD Configuration [Instructions](https://github.com/clalevee/apigee-simple-buildkite-pipeline#CI/CD-Configuration-Instructions).
 
 ## CI/CD Configuration Instructions
+
+Create a GitHub repository to hold your API Proxy. 
+
+To use the `Apigee-Simple-buildkite-Pipeline`
+in your GitHub repository like `github.com/my-user/my-api-proxy-repo`, follow these
+steps:
+
+```bash
+git clone git@github.com:g-lalevee/Apigee-Simple-buildkite-Pipeline.git
+cd Apigee-Simple-buildkite-Pipeline 
+git init
+git remote add origin git@github.com:my-user/my-api-proxy.git
+git checkout -b feature/cicd-pipeline
+git add .
+git commit -m "initial commit"
+git push -u origin feature/cicd-pipeline
+```
+
 
 To be continued... Work in progress...
