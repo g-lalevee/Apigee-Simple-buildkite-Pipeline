@@ -1,5 +1,5 @@
 env: 
-  API_VERSION: "no-googleapi"  
+  API_VERSION: "googleapi"  
   #API_VERSION: "apigeeapi"
   DEFAULT_APIGEE_ORG: "bap-emea-apigee-5"
   DEFAULT_APIGEE_ENV: "default-dev"
