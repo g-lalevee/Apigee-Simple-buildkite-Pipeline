@@ -11,7 +11,7 @@ steps:
     key: "Init"
     steps:
       - label: "Set Variables for [Main] branch"
-        commands:
+        commands: 
           - buildkite-agent meta-data set AUTHOR_EMAIL $BUILDKITE_BUILD_CREATOR_EMAIL
           - buildkite-agent meta-data set APIGEE_ORG $DEFAULT_APIGEE_ORG
           - buildkite-agent meta-data set APIGEE_ENV $DEFAULT_APIGEE_ENV
@@ -32,7 +32,7 @@ steps:
           - buildkite-agent meta-data set "APIGEE_ENV" "$DEFAULT_APIGEE_ENV"
         if: build.env('BUILDKITE_BRANCH') != 'main' && build.env('BUILDKITE_BRANCH') != 'prod'
 
-  - label: "Run Linters, unit & coverage tests"
+  - label: "Run Linters, Unit & overage Tests"
     command: |
         npm install --silent --no-fund
         mkdir artifacts
@@ -49,7 +49,6 @@ steps:
         # Run JS Mocha test + upload artifact (coverage/index.html)
         ./node_modules/nyc/bin/nyc.js --reporter=html --reporter=text ./node_modules/mocha/bin/_mocha ./test/unit
         mv ./coverage/index.html ./artifacts/mocha.html
-
     artifact_paths:
       - "./artifacts/**/*"
 
@@ -58,25 +57,24 @@ steps:
     key: "Apigee-Edge"
     steps:
       - label: "mvn deploy cfg edge"
-        commands:
-          - buildkite-agent meta-data get "APIGEE_ORG"
-          - buildkite-agent meta-data get "APIGEE_ENV"
+        commands: |
+          buildkite-agent meta-data get "APIGEE_ORG"
+          buildkite-agent meta-data get "APIGEE_ENV"
           # if Linux Agent 
-          # - sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
+          # sed -i '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
           # if Mac Agent 
-          - sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
-          - echo $APIGEE_CREDS_USR $APIGEE_CREDS_PASSWORD
-          - mvn install -Papigeeapi -Dapigee.org=$$APIGEE_ORG -Denv=$$APIGEE_ENV -Dapigee.username=$APIGEE_CREDS_USR -Dapigee.password=$APIGEE_CREDS_PASSWORD -Dapigee.config.file=./EdgeConfig/edge.json -Dapigee.config.options=update
+          sed -i".bck" "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
+          echo $APIGEE_CREDS_USR $APIGEE_CREDS_PASSWORD
+          mvn install -Papigeeapi -Dapigee.org=$$APIGEE_ORG -Denv=$$APIGEE_ENV -Dapigee.username=$APIGEE_CREDS_USR -Dapigee.password=$APIGEE_CREDS_PASSWORD -Dapigee.config.file=./EdgeConfig/edge.json -Dapigee.config.options=update
       - label: "mvn package & deploy proxy Edge"
-        commands: 
-          - buildkite-agent meta-data get "APIGEE_ORG"
-          - buildkite-agent meta-data get "APIGEE_ENV"
-          - buildkite-agent meta-data get "AUTHOR_EMAIL"
-          - buildkite-agent meta-data get "APIGEE_DEPLOYMENT_SUFFIX"
-          - mvn process-resources -P$API_VERSION -Dcommit=$BUILDKITE_COMMIT -Dauthor=$$AUTHOR_EMAIL -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX
-          - mvn apigee-enterprise:configure -P$API_VERSION -Dorg=$$APIGEE_ORG -Denv=$$APIGEE_ENV  -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX 
-          - mvn apigee-enterprise:deploy -q -Papigeeapi -Dorg=$$APIGEE_ORG -Denv=$$APIGEE_ENV -Dpassword=$APIGEE_CREDS_PASSWORD -Dusername=$APIGEE_CREDS_USR -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX  
-
+        commands: |
+          buildkite-agent meta-data get "APIGEE_ORG"
+          buildkite-agent meta-data get "APIGEE_ENV"
+          buildkite-agent meta-data get "AUTHOR_EMAIL"
+          buildkite-agent meta-data get "APIGEE_DEPLOYMENT_SUFFIX"
+          mvn process-resources -P$API_VERSION -Dcommit=$BUILDKITE_COMMIT -Dauthor=$$AUTHOR_EMAIL -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX
+          mvn apigee-enterprise:configure -P$API_VERSION -Dorg=$$APIGEE_ORG -Denv=$$APIGEE_ENV  -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX 
+          mvn apigee-enterprise:deploy -q -Papigeeapi -Dorg=$$APIGEE_ORG -Denv=$$APIGEE_ENV -Dpassword=$APIGEE_CREDS_PASSWORD -Dusername=$APIGEE_CREDS_USR -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX  
     if: build.env('API_VERSION') == 'apigeeapi'
 
   - group: "Apigee X/hybrid"
@@ -85,60 +83,56 @@ steps:
       - label: "Generate SA key file"
         command: echo "Upload GCP Service Account Key file from Buildkite Agent environment (environment hook)"
 
-            # if Linux Agent 
-            #  base64 --decode ./sa.txt > ./sa.json
-            #  sed -i "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
-            # if Mac Agent
-
       - label: "mvn deploy config xhybrid"
         command: |
             export APIGEE_ORG=$(buildkite-agent meta-data get APIGEE_ORG)
             export APIGEE_ENV=$(buildkite-agent meta-data get APIGEE_ENV)
             buildkite-agent artifact download sa.txt . 
+            # if Linux Agent 
+            # base64 --decode ./sa.txt > ./sa.json
+            # sed -i "s/target_apigee_env/$$APIGEE_ENV/g" ./EdgeConfig/edge.json
+            # if Mac Agent 
             base64 --decode -i ./sa.txt -o ./sa.json
             sed -i".bck" "s/target_apigee_env/$$APIGEE_ENV/g" ./EdgeConfig/edge.json
             mvn install -Pgoogleapi -Dapigee.org=$$APIGEE_ORG -Denv=$$APIGEE_ENV -Dsa=sa.json -Dapigee.config.file=EdgeConfig/edge.json -Dapigee.config.options="update"
 
       - label: "mvn package & deploy proxy xhybrid"
-        command: 
-          - export APIGEE_ORG=$(buildkite-agent meta-data get APIGEE_ORG)
-          - export APIGEE_ENV=$(buildkite-agent meta-data get APIGEE_ENV)
-          - export AUTHOR_EMAIL=$(buildkite-agent meta-data get AUTHOR_EMAIL)
-          - export APIGEE_DEPLOYMENT_SUFFIX=$(buildkite-agent meta-data get APIGEE_DEPLOYMENT_SUFFIX)
-          - mvn process-resources -P$API_VERSION -Dcommit=$BUILDKITE_COMMIT -Dauthor=$$AUTHOR_EMAIL -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX
-          - mvn apigee-enterprise:configure -P$API_VERSION -Dorg=$$APIGEE_ORG -Denv=$$APIGEE_ENV  -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX 
-          - buildkite-agent artifact download sa.txt . 
-          # if Linux Agent 
-          # - base64 --decode ./sa.txt > ./sa.json
-          # - sed '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
-          # if Mac Agent 
-          - base64 --decode -i ./sa.txt -o ./sa.json
-          - mvn apigee-enterprise:deploy -Pgoogleapi -Denv=$$APIGEE_ENV -Dsa=sa.json -Dorg=$$APIGEE_ORG -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX  
+        command: |
+            export APIGEE_ORG=$(buildkite-agent meta-data get APIGEE_ORG)
+            export APIGEE_ENV=$(buildkite-agent meta-data get APIGEE_ENV)
+            export AUTHOR_EMAIL=$(buildkite-agent meta-data get AUTHOR_EMAIL)
+            export APIGEE_DEPLOYMENT_SUFFIX=$(buildkite-agent meta-data get APIGEE_DEPLOYMENT_SUFFIX)
+            mvn process-resources -P$API_VERSION -Dcommit=$BUILDKITE_COMMIT -Dauthor=$$AUTHOR_EMAIL -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX
+            mvn apigee-enterprise:configure -P$API_VERSION -Dorg=$$APIGEE_ORG -Denv=$$APIGEE_ENV  -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX 
+            buildkite-agent artifact download sa.txt . 
+            # if Linux Agent 
+            # base64 --decode ./sa.txt > ./sa.json
+            # sed '' "s/target_apigee_env/$APIGEE_ENV/g" ./EdgeConfig/edge.json
+            # if Mac Agent 
+            base64 --decode -i ./sa.txt -o ./sa.json
+            mvn apigee-enterprise:deploy -Pgoogleapi -Denv=$$APIGEE_ENV -Dsa=sa.json -Dorg=$$APIGEE_ORG -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX  
     if: build.env('API_VERSION') == 'googleapi'
 
   - label: "Run Integration test (Apickli)"
     command: |
-      npm install --silent --no-fund
+        npm install --silent --no-fund
 
-      # update apickli config file (init.js) with API hostname and base path
-      export API_BASEPATH="/airports-cicd/v1"
-      echo "basepath" $API_BASEPATH
+        # update apickli config file (init.js) with API hostname and base path
+        export API_BASEPATH="/airports-cicd/v1"
+    
+        # if Linux Agent 
+        # sed -i "s@api_basepath@$API_BASEPATH@g" ./test/integration/features/support/init.js
+        # sed -i "s@organization_hostname@$$TEST_HOST@g" ./test/integration/features/support/init.js
+        # if Mac Agent 
+        sed -i".bck" "s@api_basepath@$$API_BASEPATH@g" ./test/integration/features/support/init.js
+        sed -i".bck" "s@organization_hostname@$TEST_HOST@g" ./test/integration/features/support/init.js
 
-      # if Linux Agent 
-      # sed -i "s@api_basepath@$API_BASEPATH@g" ./test/integration/features/support/init.js
-      # sed -i "s@organization_hostname@$TEST_HOST@g" ./test/integration/features/support/init.js
-      # if Mac Agent 
-      sed -i".bck" "s@api_basepath@$$API_BASEPATH@g" ./test/integration/features/support/init.js
-      sed -i".bck" "s@organization_hostname@$TEST_HOST@g" ./test/integration/features/support/init.js
+        # NODE_TLS_REJECT_UNAUTHORIZED required to support self signed certificate
+        # export NODE_TLS_REJECT_UNAUTHORIZED=0
 
-      cat ./test/integration/features/support/init.js
-
-      # NODE_TLS_REJECT_UNAUTHORIZED required to support self signed certificate
-      # export NODE_TLS_REJECT_UNAUTHORIZED=0
-
-      node ./node_modules/.bin/cucumber-js  ./test/$PROXY_NAME/integration --format json:./report.json
-      node ./test/integration/index.js
-      mv ./cucumber_report.html ./apickli.html
+        node ./node_modules/.bin/cucumber-js  ./test/$PROXY_NAME/integration --format json:./report.json
+        node ./test/integration/index.js
+        mv ./cucumber_report.html ./apickli.html
 
     artifact_paths:
       - "./apickli.html"
