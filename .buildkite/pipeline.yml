@@ -1,5 +1,5 @@
 env: 
-  API_VERSION: "googleapi"  
+  API_VERSION: "no-googleapi"  
   #API_VERSION: "apigeeapi"
   DEFAULT_APIGEE_ORG: "bap-emea-apigee-5"
   DEFAULT_APIGEE_ENV: "default-dev"
@@ -42,7 +42,7 @@ steps:
     steps:
       - label: "spectral"
         commands: 
-          - buildkite-agent artifact download "coverage/*" tmp/
+          - buildkite-agent artifact download "./node_modules/*" .
           - ./node_modules/.bin/spectral lint -r ./test/spectral/.spectral.yaml -f html -o spectral-report.html ./specs/airport-1.0.0.yaml  || true  # catch all errors for demo purpose 
         artifact_paths:
         - "./spectral-report.html"
