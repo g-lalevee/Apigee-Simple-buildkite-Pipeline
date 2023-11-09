@@ -42,7 +42,7 @@ steps:
     steps:
       - label: "spectral"
         commands: 
-          - buildkite-agent artifact download "./node_modules/*" .
+          - buildkite-agent artifact download "node_modules" .
           - ./node_modules/.bin/spectral lint -r ./test/spectral/.spectral.yaml -f html -o spectral-report.html ./specs/airport-1.0.0.yaml  || true  # catch all errors for demo purpose 
         artifact_paths:
         - "./spectral-report.html"
