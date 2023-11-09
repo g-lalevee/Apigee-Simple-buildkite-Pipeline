@@ -33,19 +33,16 @@ steps:
         if: build.env('BUILDKITE_BRANCH') != 'main' && build.env('BUILDKITE_BRANCH') != 'prod'
 
   - label: "Install Dependencies"
-    command: npm install --silent --no-fund
+    command: |
+        npm install --silent --no-fund
+        mkdir artifacts
+        # Validate Specification file (OAS, Swagger) using Stoplight Spectral
+        ./node_modules/.bin/spectral lint -r ./test/spectral/.spectral.yaml -f html -o ./artifacts/spectral-report.html ./specs/airport-1.0.0.yaml  || true  # catch all errors for demo purpose 
+        # Run apigeeLint test + upload artifact (apigeelint-out.html)
+        ./node_modules/apigeelint/cli.js -s ./apiproxy -f html.js -e PO013,PO025 > ./artifacts/apigeelint-out.html
     artifact_paths:
-      - "./node_modules/**/*"
+      - "./artifacts/**/*"
 
-  - group: "Unit Test"
-    key: "Unit"
-    steps:
-      - label: "spectral"
-        commands: 
-          - buildkite-agent artifact download "node_modules" .
-          - ./node_modules/.bin/spectral lint -r ./test/spectral/.spectral.yaml -f html -o spectral-report.html ./specs/airport-1.0.0.yaml  || true  # catch all errors for demo purpose 
-        artifact_paths:
-        - "./spectral-report.html"
 
   - group: "Apigee Edge"
     key: "Apigee-Edge"
