@@ -47,7 +47,7 @@ steps:
         ./node_modules/eslint/bin/eslint.js -c ./.eslintrc-jsc.yml --format html ./apiproxy/resources/jsc > ./artifacts/eslint-out.html
 
         # Run JS Mocha test + upload artifact (coverage/index.html)
-        ./node_modules/nyc/bin/nyc.js --reporter=html --reporter=text ./node_modules/mocha/bin/_mocha ./artifacts/test/unit
+        ./node_modules/nyc/bin/nyc.js --reporter=html --reporter=text ./node_modules/mocha/bin/_mocha ./test/unit
         mv ./coverage/index.html ./artifacts/mocha.html
 
     artifact_paths:
@@ -115,3 +115,23 @@ steps:
           - base64 --decode -i ./sa.txt -o ./sa.json
           - mvn apigee-enterprise:deploy -Pgoogleapi -Denv=$$APIGEE_ENV -Dsa=sa.json -Dorg=$$APIGEE_ORG -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX  
     if: build.env('API_VERSION') == 'googleapi'
+
+  - label: "Run Integration test (Apickli)"
+    command: |
+      npm install --silent --no-fund
+
+      # update apickli config file (init.js) with API hostname and base path
+      export TEST_HOST=$(buildkite-agent meta-data get TEST_HOST)
+      export API_BASEPATH="/airports-cicd/v1"
+      sed -i "s@api_basepath@$API_BASEPATH@g" ./test/integration/features/support/init.js
+      sed -i "s@organization_hostname@$$TEST_HOST@g" ./test/integration/features/support/init.js
+
+      # NODE_TLS_REJECT_UNAUTHORIZED required to support self signed certificate
+      # export NODE_TLS_REJECT_UNAUTHORIZED=0
+
+      node ./node_modules/.bin/cucumber-js  ./test/$PROXY_NAME/integration --format json:./report.json
+      node ./test/integration/index.js
+      mv ./cucumber_report.html ./apickli.html
+
+    artifact_paths:
+      - "./apickli.html"
