@@ -32,14 +32,24 @@ steps:
           - buildkite-agent meta-data set "APIGEE_ENV" "$DEFAULT_APIGEE_ENV"
         if: build.env('BUILDKITE_BRANCH') != 'main' && build.env('BUILDKITE_BRANCH') != 'prod'
 
-  - label: "Install Dependencies"
+  - label: "Run Linters, unit & coverage tests"
     command: |
         npm install --silent --no-fund
         mkdir artifacts
+        
         # Validate Specification file (OAS, Swagger) using Stoplight Spectral
         ./node_modules/.bin/spectral lint -r ./test/spectral/.spectral.yaml -f html -o ./artifacts/spectral-report.html ./specs/airport-1.0.0.yaml  || true  # catch all errors for demo purpose 
+        
         # Run apigeeLint test + upload artifact (apigeelint-out.html)
         ./node_modules/apigeelint/cli.js -s ./apiproxy -f html.js -e PO013,PO025 > ./artifacts/apigeelint-out.html
+        
+        # Run eslint test + upload artifact (eslint-out.html)
+        ./node_modules/eslint/bin/eslint.js -c ./.eslintrc-jsc.yml --format html ./apiproxy/resources/jsc > ./artifacts/eslint-out.html
+
+        # Run JS Mocha test + upload artifact (coverage/index.html)
+        ./node_modules/nyc/bin/nyc.js --reporter=html --reporter=text ./node_modules/mocha/bin/_mocha ./artifacts/test/unit
+        mv ./coverage/index.html ./artifacts/mocha.html
+
     artifact_paths:
       - "./artifacts/**/*"
 
