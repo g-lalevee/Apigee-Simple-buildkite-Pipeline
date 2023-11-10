@@ -64,7 +64,7 @@ limitations under the License.
 			<!-- Current Generation SaaS -->
 			<id>apigeeapi</id>
 			<properties>
-				<apigee.plugin.version>1.2.2</apigee.plugin.version>
+				<apigee.plugin.version>1.5.3</apigee.plugin.version>
 				<apigee.hosturl>https://api.enterprise.apigee.com</apigee.hosturl>
 				<apigee.authtype>oauth</apigee.authtype>
 				<apigee.username>${username}</apigee.username>
@@ -75,7 +75,7 @@ limitations under the License.
 					<plugin>
 						<groupId>com.apigee.edge.config</groupId>
 						<artifactId>apigee-config-maven-plugin</artifactId>
-						<version>1.4.3</version>
+						<version>1.5.3</version>
 						<executions>
 							<execution>
 								<id>create-config-cache</id>
