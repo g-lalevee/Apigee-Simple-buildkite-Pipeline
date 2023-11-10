@@ -64,27 +64,24 @@ To create it in your Apigee organization's GCP project, use following gcloud com
 ```sh
 SA_NAME=<your-new-service-account-name>
 
-gcloud iam service-accounts create $SA_NAME --display-name="Azure-ci Service Account"
+gcloud iam service-accounts create $SA_NAME --display-name="Buildkite Service Account"
 
 PROJECT_ID=$(gcloud config get-value project)
-AZURE_SA=$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com
+BUILDKITE_SA=$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com
 
 gcloud projects add-iam-policy-binding "$PROJECT_ID" \
-  --member="serviceAccount:$AZURE_SA" \
+  --member="serviceAccount:$BUILDKITE_SA" \
   --role="roles/apigee.environmentAdmin"
 
 gcloud projects add-iam-policy-binding "$PROJECT_ID" \
-  --member="serviceAccount:$AZURE_SA" \
+  --member="serviceAccount:$BUILDKITE_SA" \
   --role="roles/apigee.apiAdmin"
 
-gcloud iam service-accounts keys create $SA_NAME-key.json --iam-account=$AZURE_SA --key-file-type=json 
+gcloud iam service-accounts keys create $SA_NAME-key.json --iam-account=$BUILDKITE_SA --key-file-type=json 
 
 ```
 
 Copy `<your-new-service-account-name>-key.json` file content to clipboard. 
-
-Note: you can update and run [generate-SA.sh](./generate-SA.sh) file to create your GCP service account.
-
 
 
 ### Initialize a GitHub Repository
