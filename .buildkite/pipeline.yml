@@ -9,7 +9,7 @@ env:
   #DEFAULT_APIGEE_ENV: "test"
   #TEST_HOST: "emea-demo7-test.apigee.net"
 
-  # Service Account key file (APigee X/hybrid) or Apigee UserID and Password (Apigee Edge)
+  # Service Account key file (Apigee X/hybrid) or Apigee UserID and Password (Apigee Edge)
   # APIGEE_CREDS_USR and APIGEE_CREDS_PASSWORD, are uploaded as artifact or environment variables 
   # when run global environment hook (cf Agent config) 
 

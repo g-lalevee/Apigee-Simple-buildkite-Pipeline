@@ -1,0 +1,6 @@
+name: "Apigee Example"
+description: "An example repository you can use as a simple Apigee project with Buildkite"
+emoji: ":bash:"
+steps:
+  - command: "buildkite-agent pipeline upload"
+    label: ":pipeline:"
