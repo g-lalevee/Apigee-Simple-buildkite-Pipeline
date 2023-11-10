@@ -1,13 +1,13 @@
 env: 
-  # API_VERSION: "googleapi"  
-  # DEFAULT_APIGEE_ORG: "bap-emea-apigee-5"
-  # DEFAULT_APIGEE_ENV: "default-dev"
-  # TEST_HOST: "34.117.38.184.nip.io"
+  API_VERSION: "googleapi"  
+  DEFAULT_APIGEE_ORG: "bap-emea-apigee-5"
+  DEFAULT_APIGEE_ENV: "default-dev"
+  TEST_HOST: "34.117.38.184.nip.io"
   
-  API_VERSION: "apigeeapi"
-  DEFAULT_APIGEE_ORG: "emea-demo7"
-  DEFAULT_APIGEE_ENV: "test"
-  TEST_HOST: "emea-demo7-test.apigee.net"
+  #API_VERSION: "apigeeapi"
+  #DEFAULT_APIGEE_ORG: "emea-demo7"
+  #DEFAULT_APIGEE_ENV: "test"
+  #TEST_HOST: "emea-demo7-test.apigee.net"
 
   # Service Account key file (APigee X/hybrid) or Apigee UserID and Password (Apigee Edge)
   # APIGEE_CREDS_USR and APIGEE_CREDS_PASSWORD, are uploaded as artifact or environment variables 
@@ -72,6 +72,7 @@ steps:
           # sed -i "s/target_apigee_env/$$APIGEE_ENV/g" ./EdgeConfig/edge.json
           # if Mac Agent 
           sed -i".bck" "s/target_apigee_env/$$APIGEE_ENV/g" ./EdgeConfig/edge.json
+
           mvn clean install -Papigeeapi -Dapigee.org=$$APIGEE_ORG -Denv=$$APIGEE_ENV -Dapigee.username=$$APIGEE_CREDS_USR -Dapigee.password=$$APIGEE_CREDS_PASSWORD -Dapigee.config.file=./EdgeConfig/edge.json -Dapigee.config.options=update
 
       - label: "mvn package & deploy proxy Edge"
@@ -83,10 +84,6 @@ steps:
 
           mvn process-resources -P$API_VERSION -Dcommit=$BUILDKITE_COMMIT -Dauthor=$$AUTHOR_EMAIL -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX
           mvn apigee-enterprise:configure -P$API_VERSION -Dorg=$$APIGEE_ORG -Denv=$$APIGEE_ENV  -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX 
-          echo "-------------------------------------------------------------"
-          echo "1" $$APIGEE_ORG / $$APIGEE_ENV - $$APIGEE_CREDS_PASSWORD / $$APIGEE_CREDS_USR -  $$APIGEE_DEPLOYMENT_SUFFIX  
-          echo "-------------------------------------------------------------"
-
           mvn apigee-enterprise:deploy -Papigeeapi -Dpassword=$$APIGEE_CREDS_PASSWORD -Dusername=$$APIGEE_CREDS_USR -Denv=$$APIGEE_ENV -Dorg=$$APIGEE_ORG -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX  
 
     if: build.env('API_VERSION') == 'apigeeapi'
