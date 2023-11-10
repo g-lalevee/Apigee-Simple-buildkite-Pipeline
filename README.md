@@ -46,9 +46,48 @@ The folder [./apiproxy](./apiproxy) includes a simple API proxy bundle, a simple
 ## Limitations & Requirements
 
   - The authentication to the Apigee Edge management API is done using OAuth2. If you require MFA, please see the [documentation](https://github.com/apigee/apigee-deploy-maven-plugin#oauth-and-two-factor-authentication) for the Maven deploy plugin for how to configure MFA.
-  - The authentication to the Apigee X / Apigee hybrid management API is done using a GCP Service Account. See CI/CD Configuration [Instructions](https://github.com/clalevee/apigee-simple-buildkite-pipeline#CI/CD-Configuration-Instructions).
+  - The authentication to the Apigee X / Apigee hybrid management API is done using a GCP Service Account. See CI/CD Configuration [Instructions](https://github.com/clalevee/Apigee-Simple-buildkite-Pipeline#CI/CD-Configuration-Instructions).
 
 ## CI/CD Configuration Instructions
+
+
+
+### Create GCP Service Account (Apigee hybrid / Apigee X only)
+
+Apigee hybrid / Apigee X deployement requires a GCP Service Account with the following roles (or a custom role with all required permissions):
+
+- Apigee API Admin
+- Apigee Environment Admin
+
+To create it in your Apigee organization's GCP project, use following gcloud commands (or GCP Web UI):
+
+```sh
+SA_NAME=<your-new-service-account-name>
+
+gcloud iam service-accounts create $SA_NAME --display-name="Azure-ci Service Account"
+
+PROJECT_ID=$(gcloud config get-value project)
+AZURE_SA=$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:$AZURE_SA" \
+  --role="roles/apigee.environmentAdmin"
+
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:$AZURE_SA" \
+  --role="roles/apigee.apiAdmin"
+
+gcloud iam service-accounts keys create $SA_NAME-key.json --iam-account=$AZURE_SA --key-file-type=json 
+
+```
+
+Copy `<your-new-service-account-name>-key.json` file content to clipboard. 
+
+Note: you can update and run [generate-SA.sh](./generate-SA.sh) file to create your GCP service account.
+
+
+
+### Initialize a GitHub Repository
 
 Create a GitHub repository to hold your API Proxy. 
 
@@ -66,6 +105,8 @@ git add .
 git commit -m "initial commit"
 git push -u origin feature/cicd-pipeline
 ```
+
+## Buildkite Pipeline Configuration 
 
 
 To be continued... Work in progress...
