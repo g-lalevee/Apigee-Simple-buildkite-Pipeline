@@ -64,7 +64,7 @@ limitations under the License.
 			<!-- Current Generation SaaS -->
 			<id>apigeeapi</id>
 			<properties>
-				<apigee.plugin.version>1.5.3</apigee.plugin.version>
+				<apigee.plugin.version>1.3.3</apigee.plugin.version>
 				<apigee.hosturl>https://api.enterprise.apigee.com</apigee.hosturl>
 				<apigee.authtype>oauth</apigee.authtype>
 				<apigee.username>${username}</apigee.username>
@@ -75,7 +75,7 @@ limitations under the License.
 					<plugin>
 						<groupId>com.apigee.edge.config</groupId>
 						<artifactId>apigee-config-maven-plugin</artifactId>
-						<version>1.5.3</version>
+						<version>1.4.3</version>
 						<executions>
 							<execution>
 								<id>create-config-cache</id>
@@ -186,7 +186,7 @@ limitations under the License.
 			<!-- Next Generation SaaS and hybrid -->
 			<id>googleapi</id>
 			<properties>
-				<apigee.plugin.version>2.1.0</apigee.plugin.version>
+				<apigee.plugin.version>2.3.5</apigee.plugin.version>
 				<apigee.hosturl>https://apigee.googleapis.com</apigee.hosturl>
 				<apigee.bearer>${token}</apigee.bearer> <!-- this takes precedence over service account file -->
 				<apigee.serviceaccount.file>${sa}</apigee.serviceaccount.file>
@@ -287,7 +287,7 @@ limitations under the License.
 			<!-- copy the full apiproxy folder to target folder -->
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
+				<version>2.5</version>
 				<executions>
 					<execution>
 						<id>copy-resources</id>
@@ -338,7 +338,7 @@ limitations under the License.
 							<token>org-env.apigee.net</token>
 							<value>${TEST_HOST}</value>
 						</replacement>
-<!-- 						<replacement>
+ 						<replacement>
 							<token>/airports-cicd/v1</token>
 							<value>/airports-cicd${deployment.suffix}/v1</value>
 						</replacement>
@@ -346,7 +346,6 @@ limitations under the License.
 							<token>@description</token>
 							<value>${deployment.description}</value>
 						</replacement> 
--->
 					</replacements>
 				</configuration>
 			</plugin>
@@ -391,3 +390,4 @@ limitations under the License.
 		</plugins>
 	</build>
 </project>
+
