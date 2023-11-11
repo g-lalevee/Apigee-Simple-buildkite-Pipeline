@@ -66,6 +66,9 @@ steps:
     artifact_paths:
       - "./artifacts/**/*"
 
+  - wait:
+      allow_dependency_failure: false
+      
 # If target is Apigee Edge, Deploy Apigee configurationa and proxy
   - group: "Apigee Edge"
     key: "apigee-edge"
