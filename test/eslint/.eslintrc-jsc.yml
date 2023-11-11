@@ -11,17 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# env:
-#   node: true
-#   es6: true
+
 # extends:
 #   - google
-# root: true
+# rules: { 
+#   no-var: 0, 
+#   quotes: 0,
+#   indent: 0,
+#   space-before-function-paren: 0,
+#  object-curly-spacing: 0
+# }
 
-env:
-  node: true
-  es6: true
 extends:
   - google
   - prettier
-root: true
+rules: { no-var: 0 }
