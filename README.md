@@ -105,5 +105,64 @@ git push -u origin feature/cicd-pipeline
 
 ## Buildkite Pipeline Configuration 
 
+1.  Create Buildkite Pipeline
+    - From Buildkite interface, create a new pipeline, and link it to your GitHub repository. See [Builtkit Create Pipeline documentation](https://buildkite.com/docs/pipelines/create-your-own#create-a-pipeline)
 
-To be continued... Work in progress...
+    - Configure pipeline to use pipeline configuration file .built.kite/pipeline.yml, from your GitHub repository. See [Builtkit Pipeline Configuration documentation](https://buildkite.com/docs/pipelines/defining-steps#step-defaults-yaml-steps-editor).
+
+2.  Create Buildkite Agent
+    - If you don't have an agent, create one. See [Builtkit Agent documentation](https://buildkite.com/organizations/apigee/agents).
+  
+3.  Configure Buildkite Secret Management
+
+    To be to connect to Apigee, we need to store credentials: Service Account key file for Apigee X/hybrid or UserID and Password for Apigee Edge. See [Builtkit Secret Management documentation](https://buildkite.com/docs/pipelines/secrets).<BR> 
+    In this sample, we will store credentials and export secrets with environment hooks:<BR>
+
+    - In Buildkite Agent configuration folder, **hooks** folder, edit **environment** file and add the following lines:
+
+      ```
+      #!/bin/bash
+
+      set -euo pipefail
+
+      echo "_____Running environment hook" $BUILDKITE_PIPELINE_SLUG
+
+      # ---------------------------------------------
+      # For Apigee X/hybrid, export GCP Service 
+      # Account key file
+      # ---------------------------------------------
+
+      if [[ "$BUILDKITE_PIPELINE_SLUG" == "apigee-simple-buildkite-pipeline" &&  "$BUILDKITE_LABEL" == "Generate SA key file" ]]; then
+        # base64 /opt/homebrew/etc/buildkite-agent/hooks/sa.json > ./sa.txt
+        base64 -i /opt/homebrew/etc/buildkite-agent/hooks/sa.json -o ./sa.txt
+        buildkite-agent artifact upload ./sa.txt
+      fi
+
+      # ---------------------------------------------
+      # For Apigee Edge, export Apigee credentials 
+      # (UserID and Password)
+      # ---------------------------------------------
+
+      if [[ "$BUILDKITE_PIPELINE_SLUG" == "apigee-simple-buildkite-pipeline" && ( "$BUILDKITE_LABEL" == "mvn deploy cfg edge"  || "$BUILDKITE_LABEL" == "mvn package & deploy proxy Edge" ) ]]; then
+        export APIGEE_CREDS_USR='YOUR_APIGEE_EDGE_USER_ID'
+        export APIGEE_CREDS_PASSWORD='YOUR_APIGEE_EDGE_PASSWORD'
+      fi
+      ```
+      > Note: this script was created and tested on MacOS.
+
+    - For Apigee X/hybrid, copy your Service Account key file to **hooks** folder.
+    - For Apigee Edge, add your Apigee replace Apigee UserName and Password values by your own, in the script.
+
+
+  ## Run the pipeline
+
+Using your favorite IDE...
+1.  Update the **.buildkite/pipeline.yml** file<BR>
+In global **env:** section, change **DEFAULT_APIGEE_ORG**, **DEFAULT_APIGEE_ENV**, **TEST_HOST** values by your target Apigee organization, environment and Apigee environment hostname.<BR>
+Update **API_VERSION** variable to define Apigee target: `googleapi` = Apigee X / Apigee hybrid, `apigeeapi` = Apigee Edge
+2.  Read carefully the **Set Deployment Target** step to check if the multibranch rules match your Git and Apigee environment naming and configuration.
+3. Save
+4. Commit, Push.. et voila!
+
+
+    

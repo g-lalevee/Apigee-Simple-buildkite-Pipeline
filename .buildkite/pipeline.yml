@@ -15,7 +15,7 @@ env:
 
 steps:
 
-  - group: "Set Variables"
+  - group: "Set Deployment Target"
     key: "Init"
     steps:
       - label: "Set Variables for [Main] branch"
