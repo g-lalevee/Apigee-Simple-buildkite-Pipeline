@@ -15,8 +15,9 @@ env:
 
 steps:
 
+  # Define Apigee Deployment target from Git branch
   - group: "Set Deployment Target"
-    key: "Init"
+    key: "init"
     steps:
       - label: "Set Variables for [Main] branch"
         commands: 
@@ -40,7 +41,12 @@ steps:
           - buildkite-agent meta-data set "APIGEE_ENV" "$DEFAULT_APIGEE_ENV"
         if: build.env('BUILDKITE_BRANCH') != 'main' && build.env('BUILDKITE_BRANCH') != 'prod'
 
+  # Run pre-deployment tests: 
+  #  - Specification: Stoplight Spectral 
+  #  - Apigee Proxy: apigeeLint (Linter)
+  #  - Apigee Javascript policy: eslint (Unit Test) & Mocha (Coverage test)
   - label: "Run Linters, Unit & overage Tests"
+    key: "unit-tests"
     command: |
         npm install --silent --no-fund
         mkdir artifacts
@@ -52,7 +58,7 @@ steps:
         ./node_modules/apigeelint/cli.js -s ./apiproxy -f html.js -e PO013,PO025 > ./artifacts/apigeelint-out.html
         
         # Run eslint test + upload artifact (eslint-out.html)
-        ./node_modules/eslint/bin/eslint.js -c ./test/eslint/.eslintrc-jsc.yml --format html ./apiproxy/resources/jsc > ./artifacts/eslint-out.html
+        ./node_modules/eslint/bin/eslint.js -c ./test/eslint/.eslintrc-jsc.yml --format html ./apiproxy/resources/jsc > ./artifacts/eslint-out.html 
 
         # Run JS Mocha test + upload artifact (coverage/index.html)
         ./node_modules/nyc/bin/nyc.js --reporter=html --reporter=text ./node_modules/mocha/bin/_mocha ./test/unit
@@ -60,8 +66,10 @@ steps:
     artifact_paths:
       - "./artifacts/**/*"
 
+# If target is Apigee Edge, Deploy Apigee configurationa and proxy
   - group: "Apigee Edge"
-    key: "Apigee-Edge"
+    key: "apigee-edge"
+    depends_on: "unit-tests"
     steps:
       - label: "mvn deploy cfg edge"
         commands: |
@@ -87,8 +95,10 @@ steps:
 
     if: build.env('API_VERSION') == 'apigeeapi'
 
+# If target is Apigee X/hybrid, Deploy Apigee configurationa and proxy
   - group: "Apigee X/hybrid"
-    key: "Apigee-X"
+    key: "apigee-x"
+    depends_on: "unit-tests"
     steps:
       - label: "Generate SA key file"
         command: echo "Upload GCP Service Account Key file from Buildkite Agent environment (environment hook)"
@@ -122,7 +132,12 @@ steps:
             mvn apigee-enterprise:deploy -Pgoogleapi -Denv=$$APIGEE_ENV -Dsa=sa.json -Dorg=$$APIGEE_ORG -Ddeployment.suffix=$$APIGEE_DEPLOYMENT_SUFFIX  
     if: build.env('API_VERSION') == 'googleapi'
 
+  - wait:
+      allow_dependency_failure: false
+      
+# Run integration tests ("Behaviour Driven Testing")
   - label: "Run Integration test (Apickli)"
+    key: "integration-tests"
     command: |
         npm install --silent --no-fund
 
