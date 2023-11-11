@@ -46,11 +46,9 @@ The folder [./apiproxy](./apiproxy) includes a simple API proxy bundle, a simple
 ## Limitations & Requirements
 
   - The authentication to the Apigee Edge management API is done using OAuth2. If you require MFA, please see the [documentation](https://github.com/apigee/apigee-deploy-maven-plugin#oauth-and-two-factor-authentication) for the Maven deploy plugin for how to configure MFA.
-  - The authentication to the Apigee X / Apigee hybrid management API is done using a GCP Service Account. See CI/CD Configuration [Instructions](https://github.com/clalevee/Apigee-Simple-buildkite-Pipeline#CI/CD-Configuration-Instructions).
+  - The authentication to the Apigee X / Apigee hybrid management API is done using a GCP Service Account. See CI/CD Configuration Instructions.
 
 ## CI/CD Configuration Instructions
-
-
 
 ### Create GCP Service Account (Apigee hybrid / Apigee X only)
 
@@ -81,7 +79,7 @@ gcloud iam service-accounts keys create $SA_NAME-key.json --iam-account=$BUILDKI
 
 ```
 
-Copy `<your-new-service-account-name>-key.json` file content to clipboard. 
+Later, you will have to copy the `<your-new-service-account-name>-key.json` file to your Buildkite Agent **hooks** folder.
 
 
 ### Initialize a GitHub Repository
@@ -151,8 +149,10 @@ git push -u origin feature/cicd-pipeline
       > Note: this script was created and tested on MacOS.
 
     - For Apigee X/hybrid, copy your Service Account key file to **hooks** folder.
-    - For Apigee Edge, add your Apigee replace Apigee UserName and Password values by your own, in the script.
+    - For Apigee Edge, replace Apigee UserName and Password values by your own, in the script.
 
+    > Note: To authenticate to Apigee X:hybrid, you can also use GCP [Workload Identity Federation](https://cloud.google.com/iam/docs/workload-identity-federation).
+    > Buildkite providesplugins to integrate reading and exposing secrets to your build steps using secrets storage services, including Workload Identity Federation. See [Buildkite  Workload Identity Federation repository](https://github.com/buildkite-plugins/gcp-workload-identity-federation-buildkite-plugin).
 
   ## Run the pipeline
 
