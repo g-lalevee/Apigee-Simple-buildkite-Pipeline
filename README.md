@@ -164,5 +164,7 @@ Update **API_VERSION** variable to define Apigee target: `googleapi` = Apigee X 
 3. Save
 4. Commit, Push.. et voila!
 
+<BR>
 
+![Buildkite Pipeline in action](/img/Buildkit_cicd.gif)
     
